@@ -1,0 +1,12 @@
+.player_container{
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 95%;
+}
+.player_container div {
+  box-sizing: content-box;
+  border: 1px solid black;
+  margin-bottom: 16px;
+}
