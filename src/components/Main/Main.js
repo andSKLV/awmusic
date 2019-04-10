@@ -1,13 +1,11 @@
 import React from 'react';
 import Sidebar from '../Sidebar';
 import Player from '../Player';
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
-import {
-  Playlists,
-  Recent,
-  Some,
-  Greating,
-} from '../CentralBlocks';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+import Playlists from '../CentralBlocks/Playlists.js';
+import Recent from '../CentralBlocks/Recent.js';
+import Some from '../CentralBlocks/Some.js';
+import Greating from '../CentralBlocks/Greating.js';
 
 class Main extends React.Component {
   render () {
