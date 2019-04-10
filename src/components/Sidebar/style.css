@@ -6,7 +6,4 @@
 .sidebar_container div {
   margin-bottom: 8px;
   box-sizing: content-box;
-  border: 1px solid black;
-  height: 80px;
-  width: 80px;
 }
