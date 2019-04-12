@@ -1,4 +1,6 @@
 import React from 'react';
+import {Pane} from "evergreen-ui";
+import PlayerButton from "../PlayerButton/PlayerButton"
 
 const Player = props => {
   return (
@@ -9,9 +11,16 @@ const Player = props => {
       <div style={{"height": "32px"}}>
         sound bar
       </div>
-      <div style={{'height' : '64px'}}>
-        btns 
-      </div>
+      <Pane
+        display="flex"
+        flexFlow="row nowrap"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <PlayerButton icon="fast-backward" onClick={props.skipToPreviousItem}/>
+        <PlayerButton icon={props.isPlaying ? "pause" : "play"} onClick={props.isPlaying ? props.pause : props.play}/>
+        <PlayerButton icon="fast-forward" onClick={props.skipToNextItem}/>
+      </Pane>
     </div>
   );
 }
