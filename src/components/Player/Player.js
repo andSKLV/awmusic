@@ -1,5 +1,6 @@
 import React from 'react';
 import {Pane} from "evergreen-ui";
+import SoundBar from "../SoundBar/SoundBar"
 
 const Player = props => {
   return (
@@ -9,9 +10,14 @@ const Player = props => {
       >
         <img src={props.artworkURL} alt="Обложка" height="100%" width="100%"/>
       </Pane>
-      <div style={{"height": "32px"}}>
-        sound bar
-      </div>
+      <Pane
+        display="flex"
+        flexFlow="column nowrap"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <SoundBar title={props.title} authorName={props.authorName} albumName={props.albumName}/>
+      </Pane>
       <div style={{'height' : '64px'}}>
         btns 
       </div>
