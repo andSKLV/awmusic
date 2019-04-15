@@ -1,0 +1,29 @@
+.container {
+  height: 100%;
+  width: 100%;
+  background-color: #F9F9FB;
+}
+
+.container, .buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  flex-direction: column;
+}
+
+.buttons {
+  margin-top: 16px;
+  flex-direction: row;
+}
+
+.artwork {
+  width: 256px;
+  height: 256px;
+  margin-bottom: 16px;
+  background-color: #E4E7EB;
+  border-radius: 10px;
+}
