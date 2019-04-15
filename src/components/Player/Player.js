@@ -21,6 +21,6 @@ const Player = props => {
       </div>
     </div>
   );
-}
+};
 
 export default Player;
