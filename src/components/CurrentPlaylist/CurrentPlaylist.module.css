@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background-color: #E4E7EB;
+}
+
+.table {
+    width: 100%;
+}
+
+.tableBody {
+    overflow: auto;
+}
