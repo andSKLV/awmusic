@@ -1,6 +1,7 @@
 import React from 'react';
 import {Pane, Table, Icon} from 'evergreen-ui';
 import {Link} from 'react-router-dom';
+import styles from './TabsContainer.module.css';
 
 const TabsContainer = props => {
     const tabs = ['Playlists','Recent','Some'];
