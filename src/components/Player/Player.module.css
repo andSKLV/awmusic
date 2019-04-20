@@ -1,11 +1,11 @@
-.player_container{
+.PLayerContainer{
   padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   height: 95%;
 }
-.player_container div {
+.PLayerContainer_Child {
   box-sizing: content-box;
   border: 1px solid black;
   margin-bottom: 16px;
