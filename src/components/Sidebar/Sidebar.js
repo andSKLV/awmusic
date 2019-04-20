@@ -7,9 +7,12 @@ const Sidebar = props => {
   return (
     <div className={styles.SidebarContainer}>
       <SearchInput placeholder="Filter traits..." width="100%" />
-      <div className={styles.TabsContainer}>
-        <TabsContainer />
-      </div>
+      <TabsContainer
+        isAuthorized={props.isAuthorized}
+        authorize={props.authorize}
+        unauthorize={props.unauthorize}
+        currentTab={props.currentTab}
+      />
       <div className={styles.SidebarContainer_Child}>Some</div>
     </div>
   );
