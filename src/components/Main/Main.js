@@ -7,42 +7,86 @@ import Recent from '../CentralBlocks/Recent.js';
 import Some from '../CentralBlocks/Some.js';
 import Greating from '../CentralBlocks/Greating.js';
 import styles from "./Main.module.css";
+import Api from "../../service/api.js";
 
 class Main extends React.Component {
   state = {
     currentTab: 'browse',
-    nowPlaying: null
+    nowPlaying: {
+      artworkURL: '',
+      title: 'song',
+      authorName: 'author',
+      albumName: 'album',
+    },
+    isAuthorized: false,
+    queue: [],
+    isPlaying: false,
   };
 
   componentDidMount() {
-    document.addEventListener('musickitloaded', () => {
-      this.music = this.MusicKit.configure({
-        developerToken: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlhKWVI5TFpCNVgifQ.eyJpYXQiOjE1NDQwMjU5MzEsImV4cCI6MTU1OTU3NzkzMSwiaXNzIjoiVUM5REc5Mko2SiJ9.NE-pTkKDHS6klZ52oub617LWgvedHMYFG4-p8csfuIQH60S7gGwSIWeigY7h4R_eKcLA8X3KZqyMT0H0Ix73Iw',
-        name: 'Codepen',
-        build: '1'
-      }).getInstance();
-    });
+    document.addEventListener('musickitloaded', () => this.init());
+  }
+  init = async () => {
+    this.music = new Api();
+    await this.music.configure();
+    this.isAuthorized();
+  }
+  isAuthorized = async () => {
+    console.log(this.music);
+    const isAuthorized = await this.music.isAuthorized();
+    if (isAuthorized) this.play();
+    this.setState({ isAuthorized });
   }
 
   handleSong = () => {
-    this.setState({nowPlaying: this.music.nowPlayingItem})
+    this.setState({ nowPlaying: this.music.nowPlayingItem })
   };
 
   handleTab = () => {
-    this.setState({currentTab: this.music.nowPlayingItem})
+    this.setState({ currentTab: this.music.nowPlayingItem })
   };
+  authorize = async () => {
+    const res = await this.music.authorize();
+    if (res && res.length>5) {
+      this.setState({
+        isAuthorized: true
+      })
+    }
+    this.play();
+  }
+  unauthorize = async () => {
+    await this.music.unauthorize();
+    this.setState({
+      isAuthorized: false
+    });
+  }
+  changeToMediaAtIndex = ind => {
 
-  render () {
+  }
+  play = async () => {
+    this.music.play();
+  }
+  pause = () => {
+
+  }
+  skipToPreviousItem = () => {
+
+  }
+  skipToNextItem = () => {
+
+  }
+
+  render() {
     return (
       <Router>
         <div className={styles.MainContainer}>
           <div className={styles.MainLeft}>
             <Sidebar
-              isAuthorized={this.music.isAuthorized}
-              authorize={this.music.authorize}
-              unauthorize={this.music.unauthorize}
-              changeToMediaAtIndex={this.music.changeToMediaAtIndex}
-              playlist={this.music.player.queue.items}
+              isAuthorized={this.state.isAuthorized}
+              authorize={this.authorize}
+              unauthorize={this.unauthorize}
+              changeToMediaAtIndex={this.changeToMediaAtIndex}
+              playlist={this.state.queue}
               currentTab={this.state.currentTab}
               nowPlaying={this.state.nowPlaying}
               handleSong={this.handleSong}
@@ -58,11 +102,11 @@ class Main extends React.Component {
           <div className={styles.MainRight}>
             <Player
               nowPlaying={this.state.nowPlaying}
-              isPlaying={this.music.player.isPlaying}
-              play={this.music.play}
-              pause={this.music.pause}
-              skipToPreviousItem={this.music.skipToPreviousItem}
-              skipToNextItem={this.music.skipToNextItem}
+              isPlaying={this.state.isPlaying}
+              play={this.play}
+              pause={this.pause}
+              skipToPreviousItem={this.skipToPreviousItem}
+              skipToNextItem={this.skipToNextItem}
             />
           </div>
         </div>
