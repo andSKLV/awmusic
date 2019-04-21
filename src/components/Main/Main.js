@@ -9,6 +9,11 @@ import Greating from '../CentralBlocks/Greating.js';
 import styles from "./Main.module.css";
 
 class Main extends React.Component {
+  state = {
+    currentTab: 'browse',
+    nowPlaying: null
+  };
+
   componentDidMount() {
     document.addEventListener('musickitloaded', () => {
       this.music = this.MusicKit.configure({
@@ -19,12 +24,30 @@ class Main extends React.Component {
     });
   }
 
+  handleSong = () => {
+    this.setState({nowPlaying: this.music.nowPlayingItem})
+  };
+
+  handleTab = () => {
+    this.setState({currentTab: this.music.nowPlayingItem})
+  };
+
   render () {
     return (
       <Router>
         <div className={styles.MainContainer}>
           <div className={styles.MainLeft}>
-            <Sidebar />
+            <Sidebar
+              isAuthorized={this.music.isAuthorized}
+              authorize={this.music.authorize}
+              unauthorize={this.music.unauthorize}
+              changeToMediaAtIndex={this.music.changeToMediaAtIndex}
+              playlist={this.music.player.queue.items}
+              currentTab={this.state.currentTab}
+              nowPlaying={this.state.nowPlaying}
+              handleSong={this.handleSong}
+              handleTab={this.handleTab}
+            />
           </div>
           <div className={styles.MainCenter}>
             <Route path="/" exact component={Greating} />
@@ -33,7 +56,14 @@ class Main extends React.Component {
             <Route path="/some" component={Some} />
           </div>
           <div className={styles.MainRight}>
-            <Player />
+            <Player
+              nowPlaying={this.state.nowPlaying}
+              isPlaying={this.music.player.isPlaying}
+              play={this.music.play}
+              pause={this.music.pause}
+              skipToPreviousItem={this.music.skipToPreviousItem}
+              skipToNextItem={this.music.skipToNextItem}
+            />
           </div>
         </div>
       </Router>

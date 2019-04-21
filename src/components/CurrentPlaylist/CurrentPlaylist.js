@@ -12,7 +12,7 @@ const CurrentPlaylist = (props) => {
           {playlist.map((song, index) => <SongRow
             song={song}
             index={index}
-            nowPlaying = { props.nowPlayingId === song.id }
+            isNowPlaying = { props.nowPlaying.id === song.id }
             changeToMediaAtIndex={props.changeToMediaAtIndex}
             handleSong={props.handleSong}
           />)}
