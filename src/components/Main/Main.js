@@ -21,6 +21,8 @@ class Main extends React.Component {
     isAuthorized: false,
     queue: [],
     isPlaying: false,
+    playlists: [],
+    albums: [],
   };
 
   componentDidMount() {
@@ -29,12 +31,34 @@ class Main extends React.Component {
   init = async () => {
     this.music = new Api();
     await this.music.configure();
-    this.isAuthorized();
+    const isAuthorized = this.isAuthorized();
+    if (isAuthorized) {
+      await this.loadData();
+      this.setSong();
+    }
+  }
+  setSong = async () => {
+    const firstAlbumId =  this.state.albums[0].id;
+    const songs = await this.getSongsOfAlbum(firstAlbumId);
+    if (!songs.length) return false;
+    const firstSong = songs[0].id;
+    this.setQueue(firstSong,'song');
+  }
+  async getAlbumInfo(id) {
+    return await this.music.getAlbum(id);
+  }
+  getSongsOfAlbum = async (id) => {
+    const album = await this.getAlbumInfo(id);
+    return album.relationships.tracks.data;
+  }
+  setQueue = (id,type) => {
+    this.music.setQueue(id,type);
+  }
+  loadData = async () => {
+    return Promise.all([this.getAlbums(), this.getPlaylists()]);
   }
   isAuthorized = async () => {
-    console.log(this.music);
     const isAuthorized = await this.music.isAuthorized();
-    if (isAuthorized) this.play();
     this.setState({ isAuthorized });
   }
 
@@ -50,9 +74,11 @@ class Main extends React.Component {
     if (res && res.length>5) {
       this.setState({
         isAuthorized: true
-      })
+      }, async ()=>{
+        await this.loadData();
+        this.setSong();
+      });
     }
-    this.play();
   }
   unauthorize = async () => {
     await this.music.unauthorize();
@@ -65,8 +91,27 @@ class Main extends React.Component {
   }
   play = async () => {
     this.music.play();
+    this.setState({
+      isPlaying: true,
+    })
   }
   pause = () => {
+    this.music.pause();
+    this.setState({
+      isPlaying: false,
+    })
+  }
+  getAlbums = async () => {
+    const albums = await this.music.getAlbums();
+    this.setState({albums});
+    return albums;
+  }
+  getPlaylists = async () => {
+    const playlists = await this.music.getPlaylists();
+    this.setState({ playlists });
+    return playlists;
+  }
+  getURL = (url, size) => {
 
   }
   skipToPreviousItem = () => {

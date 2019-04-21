@@ -27,6 +27,26 @@ export default class Api {
         });
     }
     async play () {
-       this.player.play();
+        await this.player.play();
+    }
+    async pause() {
+        await this.player.pause();
+    }
+    async getAlbums () {
+        return await this.music.api.library.albums();
+    }
+    async getPlaylists () {
+        return await this.music.api.library.playlists();
+    }
+    async setQueue (id,type) {
+        this.music.setQueue({
+            [type]: id
+        });
+    }
+    async getAlbum (id) {
+        return await this.music.api.library.album(id);
+    }
+    getCurrent () {//FIXME: doesnt work
+        return this.player.currentMediaItem;
     }
 }
