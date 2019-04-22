@@ -3,6 +3,7 @@ import Sidebar from '../Sidebar';
 import Player from '../Player';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Playlists from '../CentralBlocks/Playlists.js';
+import Albums from '../CentralBlocks/Albums.js';
 import Recent from '../CentralBlocks/Recent.js';
 import Some from '../CentralBlocks/Some.js';
 import Greating from '../CentralBlocks/Greating.js';
@@ -140,7 +141,22 @@ class Main extends React.Component {
           </div>
           <div className={styles.MainCenter}>
             <Route path="/" exact component={Greating} />
-            <Route path="/playlists" component={Playlists} />
+            <Route path="/albums" render={() => {
+              return (
+                <Albums
+                  data={this.state.albums}
+                />
+              )
+            }}
+            />
+            <Route path="/playlists" render={()=>{
+              return (
+                <Playlists 
+                  data={this.state.playlists}
+                />
+              )
+            }} 
+            />
             <Route path="/recent" component={Recent} />
             <Route path="/some" component={Some} />
           </div>
