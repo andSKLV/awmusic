@@ -13,9 +13,14 @@ const Sidebar = props => {
         authorize={props.authorize}
         unauthorize={props.unauthorize}
         currentTab={props.currentTab}
+        handleTab={props.handleTab}
       />
-      <div className={styles.SidebarContainer_Child}>Some</div>
-      <CurrentPlaylist/>
+      <CurrentPlaylist
+        playlist={props.playlist}
+        nowPlaying={props.nowPlaying}
+        changeToMediaAtIndex={props.changeToMediaAtIndex}
+        handleSong={props.handleSong}
+      />
     </div>
   );
 };

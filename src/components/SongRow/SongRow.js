@@ -3,10 +3,10 @@ import {Paragraph, Table} from "evergreen-ui";
 import styles from "./SongRow.module.css"
 
 const SongRow = props => {
-  let { song, nowPlaying, changeToMediaAtIndex, index, handleSong } = props;
+  let { song, isNowPlaying, changeToMediaAtIndex, index, handleSong } = props;
   return (
     <Table.Row
-      className={nowPlaying ? styles.playable : styles.notPlayable}
+      className={isNowPlaying ? styles.playable : styles.notPlayable}
       key={song.title+song.artistName+song.albumName}
       isSelectable
       onSelect={async () => { await changeToMediaAtIndex(index); handleSong() }}

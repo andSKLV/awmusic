@@ -7,24 +7,136 @@ import Recent from '../CentralBlocks/Recent.js';
 import Some from '../CentralBlocks/Some.js';
 import Greating from '../CentralBlocks/Greating.js';
 import styles from "./Main.module.css";
+import Api from "../../service/api.js";
 
 class Main extends React.Component {
+  state = {
+    currentTab: 'browse',
+    nowPlaying: {
+      artworkURL: '',
+      title: 'song',
+      authorName: 'author',
+      albumName: 'album',
+    },
+    isAuthorized: false,
+    queue: [],
+    isPlaying: false,
+    playlists: [],
+    albums: [],
+  };
+
   componentDidMount() {
-    document.addEventListener('musickitloaded', () => {
-      this.music = this.MusicKit.configure({
-        developerToken: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlhKWVI5TFpCNVgifQ.eyJpYXQiOjE1NDQwMjU5MzEsImV4cCI6MTU1OTU3NzkzMSwiaXNzIjoiVUM5REc5Mko2SiJ9.NE-pTkKDHS6klZ52oub617LWgvedHMYFG4-p8csfuIQH60S7gGwSIWeigY7h4R_eKcLA8X3KZqyMT0H0Ix73Iw',
-        name: 'Codepen',
-        build: '1'
-      }).getInstance();
-    });
+    document.addEventListener('musickitloaded', () => this.init());
+  }
+  init = async () => {
+    this.music = new Api();
+    await this.music.configure();
+    const isAuthorized = this.isAuthorized();
+    if (isAuthorized) {
+      await this.loadData();
+      this.setSong();
+    }
+  }
+  setSong = async () => {
+    const firstAlbumId =  this.state.albums[0].id;
+    const songs = await this.getSongsOfAlbum(firstAlbumId);
+    if (!songs.length) return false;
+    const firstSong = songs[0].id;
+    this.setQueue(firstSong,'song');
+  }
+  async getAlbumInfo(id) {
+    return await this.music.getAlbum(id);
+  }
+  getSongsOfAlbum = async (id) => {
+    const album = await this.getAlbumInfo(id);
+    return album.relationships.tracks.data;
+  }
+  setQueue = (id,type) => {
+    this.music.setQueue(id,type);
+  }
+  loadData = async () => {
+    return Promise.all([this.getAlbums(), this.getPlaylists()]);
+  }
+  isAuthorized = async () => {
+    const isAuthorized = await this.music.isAuthorized();
+    this.setState({ isAuthorized });
   }
 
-  render () {
+  handleSong = () => {
+    this.setState({ nowPlaying: this.music.nowPlayingItem })
+  };
+
+  handleTab = () => {
+    this.setState({ currentTab: this.music.nowPlayingItem })
+  };
+  authorize = async () => {
+    const res = await this.music.authorize();
+    if (res && res.length>5) {
+      this.setState({
+        isAuthorized: true
+      }, async ()=>{
+        await this.loadData();
+        this.setSong();
+      });
+    }
+  }
+  unauthorize = async () => {
+    await this.music.unauthorize();
+    this.setState({
+      isAuthorized: false
+    });
+  }
+  changeToMediaAtIndex = ind => {
+
+  }
+  play = async () => {
+    this.music.play();
+    this.setState({
+      isPlaying: true,
+    })
+  }
+  pause = () => {
+    this.music.pause();
+    this.setState({
+      isPlaying: false,
+    })
+  }
+  getAlbums = async () => {
+    const albums = await this.music.getAlbums();
+    this.setState({albums});
+    return albums;
+  }
+  getPlaylists = async () => {
+    const playlists = await this.music.getPlaylists();
+    this.setState({ playlists });
+    return playlists;
+  }
+  getURL = (url, size) => {
+
+  }
+  skipToPreviousItem = () => {
+
+  }
+  skipToNextItem = () => {
+
+  }
+
+  render() {
     return (
       <Router>
         <div className={styles.MainContainer}>
           <div className={styles.MainLeft}>
-            <Sidebar />
+            <Sidebar
+              isAuthorized={this.state.isAuthorized}
+              authorize={this.authorize}
+              unauthorize={this.unauthorize}
+              changeToMediaAtIndex={this.changeToMediaAtIndex}
+              playlist={this.state.queue}
+              currentTab={this.state.currentTab}
+              nowPlaying={this.state.nowPlaying}
+              handleSong={this.handleSong}
+              handleTab={this.handleTab}
+            />
           </div>
           <div className={styles.MainCenter}>
             <Route path="/" exact component={Greating} />
@@ -33,7 +145,14 @@ class Main extends React.Component {
             <Route path="/some" component={Some} />
           </div>
           <div className={styles.MainRight}>
-            <Player />
+            <Player
+              nowPlaying={this.state.nowPlaying}
+              isPlaying={this.state.isPlaying}
+              play={this.play}
+              pause={this.pause}
+              skipToPreviousItem={this.skipToPreviousItem}
+              skipToNextItem={this.skipToNextItem}
+            />
           </div>
         </div>
       </Router>

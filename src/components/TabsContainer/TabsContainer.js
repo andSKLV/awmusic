@@ -5,21 +5,25 @@ import styles from "./TabsContainer.module.css"
 
 const TabsContainer = props => {
       const library = {
-        "Artists": {name: "Артисты", icon: "person"},
-        "Albums": {name: "Альбомы", icon: "media"},
-        "Songs": {name: "Композиции", icon: "music"},
-        "Playlists": {name: "Плейлисты", icon: "properties"}
+        "artists": {name: "Артисты", icon: "person"},
+        "albums": {name: "Альбомы", icon: "media"},
+        "songs": {name: "Композиции", icon: "music"},
+        "playlists": {name: "Плейлисты", icon: "properties"}
       };
       const apiLibrary = {
-        "Browse": {name: "Чарты", icon: "globe"},
-        "Recommendations": {name: "Рекомандации", icon: "heart"},
+        "browse": {name: "Чарты", icon: "globe"},
+        "recommendations": {name: "Рекомандации", icon: "heart"},
       };
       const wrapper = (tabs) => {
         return Object.keys(tabs).map(tab => {
-          const linkTo = '/'+tab.toLocaleLowerCase();
+          const linkTo = '/'+tab;
           return (
             <Link to={linkTo}>
-              <Table.Row key={tab} className={tab === props.currentTab? styles.selectedCell : styles.cell}>
+              <Table.Row key={tab}
+                         className={tab === props.currentTab? styles.selectedCell : styles.cell}
+                         isSelectable
+                         onSelect={() => {props.handleTab(tabs[tab].name)}}
+              >
                 <Table.Cell>
                   <Icon icon={tabs[tab].icon} marginRight={16} />
                   <Paragraph size={500}>{tabs[tab].name}</Paragraph>
