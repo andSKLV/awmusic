@@ -1,24 +1,24 @@
 import React from 'react';
 import Sidebar from '../Sidebar';
 import Player from '../Player';
-import { BrowserRouter as Router, Route, BrowserHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Playlists from '../CentralBlocks/Playlists.js';
 import Albums from '../CentralBlocks/Albums.js';
 import Artists from '../CentralBlocks/Artists.js';
 import Songs from '../CentralBlocks/Songs.js';
 import Recent from '../CentralBlocks/Recent.js';
 import Some from '../CentralBlocks/Some.js';
+import Search from '../CentralBlocks/Search.js';
 import Greating from '../CentralBlocks/Greating.js';
 import styles from "./Main.module.css";
 import Api from "../../service/api.js";
-import { Link } from 'evergreen-ui';
 import { getUrlWithSize} from '../../service/helpers.js';
 
 class Main extends React.Component {
   state = {
     currentTab: 'browse',
     nowPlaying: {
-      artworkURL: '',
+      artworkURL: 'https://via.placeholder.com/256',
       title: 'song',
       authorName: 'author',
       albumName: 'album',
@@ -30,6 +30,7 @@ class Main extends React.Component {
     albums: [],
     artists: [],
     songs: [],
+    searchValue: '',
   };
 
   componentDidMount() {
@@ -49,7 +50,6 @@ class Main extends React.Component {
     const songs = await this.getSongsOfAlbum(firstAlbumId);
     if (!songs.length) return false;
     const firstSong = songs[0].id;
-    debugger;
     this.setQueue(firstSong,'song');
   }
   setSong = (id) => {
@@ -85,22 +85,20 @@ class Main extends React.Component {
   }
   onArtistClick = async (id) => {
     this.setState({songs:[]},async()=>{
-      debugger;
       const songs = await this.getSongsOfArtist(id);
-      debugger;
       this.setState({ songs });
     })
   }
   onSongClick = (data) => {
-    debugger;
     const { id, name, artist, url} = data;
     const fullUrl = getUrlWithSize(url,256);
     this.setSong(id);
-    this.setState({
+    const nowPlaying = {
       artworkURL: fullUrl,
       title: name,
       authorName:artist,
-    }) 
+    };
+    this.setState({nowPlaying})
   }
   extractSongs = data => {
     return data.relationships.tracks.data;
@@ -115,13 +113,26 @@ class Main extends React.Component {
     const isAuthorized = await this.music.isAuthorized();
     this.setState({ isAuthorized });
   }
-
+  onSearchChange = async (e) => {
+    const val = e.currentTarget.value;
+    if (val==='') {
+      this.setState({songs:[]})
+    } else {
+      this.search(val);
+    }
+    this.setState({searchValue:val})
+  }
+  search = async (val) => {
+    const res =  await this.music.search(val);
+    const songs = (res && res.songs) ?  res.songs.data : [];
+    this.setState({songs})
+    return songs;
+  }
   handleSong = () => {
     this.setState({ nowPlaying: this.music.nowPlayingItem })
   };
-
   handleTab = () => {
-    this.setState({ currentTab: this.music.nowPlayingItem })
+    this.setState({ currentTab: this.music.nowPlayingItem, songs: [] })
   };
   authorize = async () => {
     const res = await this.music.authorize();
@@ -196,6 +207,17 @@ class Main extends React.Component {
           </div>
           <div className={styles.MainCenter}>
             <Route path="/" exact component={Greating} />
+            <Route path="/search" render={() => {
+              return (
+                <Search
+                  onChange={this.onSearchChange}
+                  value={this.state.searchValue}
+                  onClick={this.onSongClick}
+                  data={this.state.songs}
+                />
+              )
+            }}
+            />
             <Route path="/albums" render={() => {
               return (
                 <Albums
@@ -207,12 +229,12 @@ class Main extends React.Component {
             />
             <Route path="/playlists" render={()=>{
               return (
-                <Playlists 
+                <Playlists
                   onClick={this.onPlaylistClick}
                   data={this.state.playlists}
                 />
               )
-            }} 
+            }}
             />
             <Route path="/artists" render={() => {
               return (

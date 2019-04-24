@@ -11,15 +11,14 @@
 .MainLeft{
   width: 25%;
   box-sizing: content-box;
-  border: 3px solid red;
 }
 .MainCenter{
   flex-grow: 1;
   box-sizing: content-box;
-  border: 3px solid green;
+  border-left: 2px solid gray;
+  border-right: 2px solid gray;
 }
 .MainRight{
   width: 25%;
   box-sizing: content-box;
-  border: 3px solid blue;
 }

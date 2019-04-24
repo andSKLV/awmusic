@@ -4,14 +4,14 @@ import styles from './CentralBlock.module.css';
 
 const List = props => {
     const {data, onClick, isSong} = props;
-    debugger;
+    if (!data.length) return null;
     return (
         <div className={styles.List}>
             {
                 data.map((row, ind) => {
                     const { id, attributes } = row;
                     const { name, artistName } = attributes;
-                    const url = row.attributes.artwork.url;
+                    const url = attributes.artwork && attributes.artwork.url;
 
                     return (
                         <ListRow
