@@ -1,13 +1,18 @@
 import React from 'react';
 import Sidebar from '../Sidebar';
 import Player from '../Player';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, BrowserHistory } from 'react-router-dom';
 import Playlists from '../CentralBlocks/Playlists.js';
+import Albums from '../CentralBlocks/Albums.js';
+import Artists from '../CentralBlocks/Artists.js';
+import Songs from '../CentralBlocks/Songs.js';
 import Recent from '../CentralBlocks/Recent.js';
 import Some from '../CentralBlocks/Some.js';
 import Greating from '../CentralBlocks/Greating.js';
 import styles from "./Main.module.css";
 import Api from "../../service/api.js";
+import { Link } from 'evergreen-ui';
+import { getUrlWithSize} from '../../service/helpers.js';
 
 class Main extends React.Component {
   state = {
@@ -23,6 +28,8 @@ class Main extends React.Component {
     isPlaying: false,
     playlists: [],
     albums: [],
+    artists: [],
+    songs: [],
   };
 
   componentDidMount() {
@@ -34,28 +41,75 @@ class Main extends React.Component {
     const isAuthorized = this.isAuthorized();
     if (isAuthorized) {
       await this.loadData();
-      this.setSong();
+      this.setFirstSong();
     }
   }
-  setSong = async () => {
+  setFirstSong = async () => {
     const firstAlbumId =  this.state.albums[0].id;
     const songs = await this.getSongsOfAlbum(firstAlbumId);
     if (!songs.length) return false;
     const firstSong = songs[0].id;
+    debugger;
     this.setQueue(firstSong,'song');
   }
-  async getAlbumInfo(id) {
-    return await this.music.getAlbum(id);
+  setSong = (id) => {
+    this.setQueue(id, 'song');
   }
   getSongsOfAlbum = async (id) => {
-    const album = await this.getAlbumInfo(id);
-    return album.relationships.tracks.data;
+    return await this.getSongsOf(id,'Album');
+  }
+  getSongsOfArtist = async (id) => {
+    return await this.getSongsOf(id, 'Artist');
+  }
+  getSongsOfPlaylist = async (id) => {
+    const resp = await this.getSongsOf(id, 'Playlist');
+    resp.forEach(x => x.id = x.attributes.playParams.catalogId); //quirk
+    return resp;
+  }
+  getSongsOf = async (id,type) => {
+    const api = `get${type}`;
+    const response = await this.music[api](id);
+    return this.extractSongs(response);
+  }
+  onAlbumClick = async (id) => {
+    this.setState({songs:[]},async()=>{
+      const songs = await this.getSongsOfAlbum(id);
+      this.setState({ songs });
+    })
+  }
+  onPlaylistClick = async (id) => {
+    this.setState({songs:[]},async()=> {
+      const songs = await this.getSongsOfPlaylist(id);
+      this.setState({ songs });
+    })
+  }
+  onArtistClick = async (id) => {
+    this.setState({songs:[]},async()=>{
+      debugger;
+      const songs = await this.getSongsOfArtist(id);
+      debugger;
+      this.setState({ songs });
+    })
+  }
+  onSongClick = (data) => {
+    debugger;
+    const { id, name, artist, url} = data;
+    const fullUrl = getUrlWithSize(url,256);
+    this.setSong(id);
+    this.setState({
+      artworkURL: fullUrl,
+      title: name,
+      authorName:artist,
+    }) 
+  }
+  extractSongs = data => {
+    return data.relationships.tracks.data;
   }
   setQueue = (id,type) => {
     this.music.setQueue(id,type);
   }
   loadData = async () => {
-    return Promise.all([this.getAlbums(), this.getPlaylists()]);
+    return Promise.all([this.getAlbums(), this.getPlaylists(), this.getArtists()]);
   }
   isAuthorized = async () => {
     const isAuthorized = await this.music.isAuthorized();
@@ -76,7 +130,7 @@ class Main extends React.Component {
         isAuthorized: true
       }, async ()=>{
         await this.loadData();
-        this.setSong();
+        this.setFirstSong();
       });
     }
   }
@@ -111,8 +165,10 @@ class Main extends React.Component {
     this.setState({ playlists });
     return playlists;
   }
-  getURL = (url, size) => {
-
+  getArtists = async () => {
+    const artists = await this.music.getArtists();
+    this.setState({ artists });
+    return artists;
   }
   skipToPreviousItem = () => {
 
@@ -140,7 +196,42 @@ class Main extends React.Component {
           </div>
           <div className={styles.MainCenter}>
             <Route path="/" exact component={Greating} />
-            <Route path="/playlists" component={Playlists} />
+            <Route path="/albums" render={() => {
+              return (
+                <Albums
+                  onClick={this.onAlbumClick}
+                  data={this.state.albums}
+                />
+              )
+            }}
+            />
+            <Route path="/playlists" render={()=>{
+              return (
+                <Playlists 
+                  onClick={this.onPlaylistClick}
+                  data={this.state.playlists}
+                />
+              )
+            }} 
+            />
+            <Route path="/artists" render={() => {
+              return (
+                <Artists
+                  onClick={this.onArtistClick}
+                  data={this.state.artists}
+                />
+              )
+            }}
+            />
+            <Route path="/songs" render={() => {
+              return (
+                <Songs
+                  onClick={this.onSongClick}
+                  data={this.state.songs}
+                />
+              )
+            }}
+            />
             <Route path="/recent" component={Recent} />
             <Route path="/some" component={Some} />
           </div>

@@ -35,17 +35,27 @@ export default class Api {
     async getAlbums () {
         return await this.music.api.library.albums();
     }
+    async getAlbum(id) {
+        return await this.music.api.library.album(id);
+    }
     async getPlaylists () {
         return await this.music.api.library.playlists();
+    }
+    async getPlaylist(id) {
+        return await this.music.api.library.playlist(id);
+    }
+    async getArtists () {
+        return await this.music.api.library.artists();
+    }
+    async getArtist(id) {
+        return await this.music.api.library.artist(id);
     }
     async setQueue (id,type) {
         this.music.setQueue({
             [type]: id
         });
     }
-    async getAlbum (id) {
-        return await this.music.api.library.album(id);
-    }
+
     getCurrent () {//FIXME: doesnt work
         return this.player.currentMediaItem;
     }
