@@ -21,7 +21,7 @@ const Albums = props => {
                             name={name}
                         />
                     </Link>
-                )   
+                )
             })}
         </div>
     )

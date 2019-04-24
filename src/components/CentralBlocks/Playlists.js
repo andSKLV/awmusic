@@ -9,7 +9,6 @@ const Playlists = props => {
         <div className={styles.gridTemplate}>
             {data.map(el => {
                 const { name } = el.attributes;
-                debugger;
                 const url = el.attributes.artwork.url;
                 const id = el.id;
                 return (

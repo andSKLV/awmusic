@@ -5,6 +5,7 @@ import styles from "./TabsContainer.module.css"
 
 const TabsContainer = props => {
       const library = {
+        "search": {name: "Поиск", icon: "search"},
         "artists": {name: "Артисты", icon: "person"},
         "albums": {name: "Альбомы", icon: "media"},
         "songs": {name: "Композиции", icon: "music"},
@@ -20,9 +21,9 @@ const TabsContainer = props => {
           return (
             <Link to={linkTo}>
               <Table.Row key={tab}
-                         className={tab === props.currentTab? styles.selectedCell : styles.cell}
-                         isSelectable
-                         onSelect={() => {props.handleTab(tabs[tab].name)}}
+                className={tab === props.currentTab? styles.selectedCell : styles.cell}
+                isSelectable
+                onSelect={() => {props.handleTab(tabs[tab].name)}}
               >
                 <Table.Cell>
                   <Icon icon={tabs[tab].icon} marginRight={16} />

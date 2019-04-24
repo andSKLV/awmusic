@@ -55,6 +55,9 @@ export default class Api {
             [type]: id
         });
     }
+    async search (str) {
+        return await this.music.api.search(str, { limit: 8, types: 'songs' });
+    }
 
     getCurrent () {//FIXME: doesnt work
         return this.player.currentMediaItem;
