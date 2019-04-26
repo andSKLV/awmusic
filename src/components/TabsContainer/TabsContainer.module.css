@@ -1,0 +1,31 @@
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    background-color: #E4E7EB;
+}
+
+.table {
+    width: 100%;
+}
+
+.tableBody {
+    overflow: auto;
+}
+
+.selectedCell, .cell:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.selectedCell, .cell, .heading {
+    height: auto;
+    padding: 8px 0;
+}
+
+A, A:visited, A:active {
+    color: #66788A;
+    text-decoration: none
+}
+

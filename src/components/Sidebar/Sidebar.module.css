@@ -1,0 +1,13 @@
+.SidebarContainer{
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  height: 100%;
+}
+.SidebarContainer_Child {
+  margin-bottom: 8px;
+  box-sizing: content-box;
+}
+.TabsContainer {
+  height: 35%;
+}

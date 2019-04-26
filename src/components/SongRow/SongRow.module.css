@@ -1,0 +1,12 @@
+.playable {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.notPlayable:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.playable, .notPlayable {
+    height: auto;
+    padding: 8px 0;
+}

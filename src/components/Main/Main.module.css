@@ -1,0 +1,24 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+.MainContainer{
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+}
+.MainLeft{
+  width: 25%;
+  box-sizing: content-box;
+}
+.MainCenter{
+  flex-grow: 1;
+  box-sizing: content-box;
+  border-left: 2px solid gray;
+  border-right: 2px solid gray;
+}
+.MainRight{
+  width: 25%;
+  box-sizing: content-box;
+}

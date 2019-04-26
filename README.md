@@ -1,3 +1,12 @@
+Tinkoff Frontend School 2019 Spring
+Graduation project
+Web interface for using apple music
+Features:
+ - Logging in
+ - Playing music from your library
+ - Your library, artist, playlist
+ - Searching track in apple music media library
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
